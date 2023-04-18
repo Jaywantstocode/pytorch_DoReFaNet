@@ -27,7 +27,7 @@ parser = argparse.ArgumentParser(description='DoReFa-Net pytorch')
 parser.add_argument('--root_dir', type=str, default='./')
 parser.add_argument('--data_dir', type=str, default='/mnt/tmp/raw-data')
 parser.add_argument('--log_name', type=str, default='alexnet_w1a2_finetune')
-parser.add_argument('--pretrain', action='store_true', default=True)
+parser.add_argument('--pretrain', action='store_true', default=False)
 parser.add_argument('--pretrain_dir', type=str, default='./ckpt/alexnet_baseline')
 
 parser.add_argument('--Wbits', type=int, default=1)
@@ -36,13 +36,13 @@ parser.add_argument('--Abits', type=int, default=2)
 parser.add_argument('--lr', type=float, default=0.01)
 parser.add_argument('--wd', type=float, default=5e-4)
 
-parser.add_argument('--train_batch_size', type=int, default=256)
-parser.add_argument('--eval_batch_size', type=int, default=100)
+parser.add_argument('--train_batch_size', type=int, default=128)
+parser.add_argument('--eval_batch_size', type=int, default=50)
 parser.add_argument('--max_epochs', type=int, default=30)
 
 parser.add_argument('--log_interval', type=int, default=10)
 parser.add_argument('--use_gpu', type=str, default='0')
-parser.add_argument('--num_workers', type=int, default=20)
+parser.add_argument('--num_workers', type=int, default=10)
 
 parser.add_argument('--cluster', action='store_true', default=False)
 
@@ -63,6 +63,7 @@ def main():
   # Data loading code
   traindir = os.path.join(cfg.data_dir, 'train')
   valdir = os.path.join(cfg.data_dir, 'val')
+
 
   train_dataset = datasets.ImageFolder(traindir, imgnet_transform(is_training=True))
   train_loader = torch.utils.data.DataLoader(train_dataset,
@@ -139,8 +140,8 @@ def main():
         pred = pred.t()
         correct = pred.eq(targets.view(1, -1).expand_as(pred))
 
-        top1 += correct[:1].view(-1).float().sum(0, keepdim=True).item()
-        top5 += correct[:5].view(-1).float().sum(0, keepdim=True).item()
+        top1 += correct[:1].reshape(-1).float().sum(0, keepdim=True).item()
+        top5 += correct[:5].reshape(-1).float().sum(0, keepdim=True).item()
         pbar.update(cfg.eval_batch_size)
 
     top1 *= 100 / len(val_dataset)
