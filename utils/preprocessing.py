@@ -74,6 +74,6 @@ def voc_transform(is_training=True):
 def create_voc_datasets(data_dir, is_training):
     transform = voc_transform(is_training)
     voc_dataset = dset.VOCDetection(
-        root=data_dir, year="2007", image_set="train" if is_training else "val", transform=transform, download=True
+        root=data_dir, year="2012", image_set="train" if is_training else "val", transform=transform, download=False, 
     )
     return voc_dataset
