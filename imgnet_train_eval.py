@@ -25,13 +25,13 @@ from tensorboardX import SummaryWriter
 parser = argparse.ArgumentParser(description='DoReFa-Net pytorch')
 
 parser.add_argument('--root_dir', type=str, default='./')
-parser.add_argument('--data_dir', type=str, default='/mnt/tmp/raw-data')
+parser.add_argument('--data_dir', type=str, default='./tiny-imagenet-200')
 parser.add_argument('--log_name', type=str, default='alexnet_w1a2_finetune')
 parser.add_argument('--pretrain', action='store_true', default=True)
 parser.add_argument('--pretrain_dir', type=str, default='./ckpt/alexnet_baseline')
 
 parser.add_argument('--Wbits', type=int, default=1)
-parser.add_argument('--Abits', type=int, default=2)
+parser.add_argument('--Abits', type=int, default=32)
 
 parser.add_argument('--lr', type=float, default=0.01)
 parser.add_argument('--wd', type=float, default=5e-4)
@@ -86,7 +86,12 @@ def main():
   # optionally resume from a checkpoint
   if cfg.pretrain:
       pretrained_model = torchvision.models.alexnet(pretrained=True)
-      model.load_state_dict(pretrained_model.state_dict())
+      pretrained_dict = pretrained_model.state_dict()
+      model_dict = model.state_dict()
+
+      pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict and "classifier.6" not in k}
+      model_dict.update(pretrained_dict)
+      model.load_state_dict(model_dict)
 
   # define loss function (criterion) and optimizer
   optimizer = torch.optim.SGD(model.parameters(), cfg.lr, momentum=0.9, weight_decay=cfg.wd)
