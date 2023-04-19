@@ -29,4 +29,9 @@ Model|W-bit|A-bit|Top-1 Accuracy|Top-5 Accuracy
 AlexNet|32|32|56.50%|79.01%
 AlexNet|1|32|53.31%|76.72%
 
+## coco
+```
+pip install git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI
+```
+
 

@@ -27,7 +27,7 @@ parser = argparse.ArgumentParser(description='DoReFa-Net pytorch')
 parser.add_argument('--root_dir', type=str, default='./')
 parser.add_argument('--data_dir', type=str, default='/mnt/tmp/raw-data')
 parser.add_argument('--log_name', type=str, default='alexnet_w1a2_finetune')
-parser.add_argument('--pretrain', action='store_true', default=False)
+parser.add_argument('--pretrain', action='store_true', default=True)
 parser.add_argument('--pretrain_dir', type=str, default='./ckpt/alexnet_baseline')
 
 parser.add_argument('--Wbits', type=int, default=1)
@@ -85,7 +85,8 @@ def main():
 
   # optionally resume from a checkpoint
   if cfg.pretrain:
-    model.load_state_dict(torch.load(cfg.pretrain_dir))
+      pretrained_model = torchvision.models.alexnet(pretrained=True)
+      model.load_state_dict(pretrained_model.state_dict())
 
   # define loss function (criterion) and optimizer
   optimizer = torch.optim.SGD(model.parameters(), cfg.lr, momentum=0.9, weight_decay=cfg.wd)

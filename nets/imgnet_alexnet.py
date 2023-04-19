@@ -3,11 +3,12 @@ import torch.nn as nn
 import torch.nn.init as init
 
 from utils.quant_dorefa import *
+import torchvision.models
 
 
-class AlexNet_Q(nn.Module):
+class AlexNet_Q(torchvision.models.AlexNet):
   def __init__(self, wbit, abit, num_classes=1000):
-    super(AlexNet_Q, self).__init__()
+    super(AlexNet_Q, self).__init__(num_classes=num_classes)
     Conv2d = conv2d_Q_fn(w_bit=wbit)
     Linear = linear_Q_fn(w_bit=wbit)
 
